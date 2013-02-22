@@ -20,7 +20,7 @@ for l in gzip.open("zips.gz"):
                       "properties": None })
 
 collection = { "type": "FeatureCollection",
-               "features": features[:2] }
+               "features": features }
 with closing(file("zips.geojson", "w")) as fp:
     json.dump(collection, fp)
 with closing(file("zips.tsv", "w")) as fp:
