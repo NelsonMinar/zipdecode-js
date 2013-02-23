@@ -42,7 +42,7 @@ text { fill: #cbcbcb; font-size: 24px; }
 var width = 1200, height = 600;
 var unselectedColor = "#999a63";
 var selectedColor = "#cbcbcb";
-var instructions = "type zip";
+var instructions = "type zipcode";
 
 // Display: geographic projection
 var proj = d3.geo.albersUsa().scale(1200)
@@ -65,19 +65,19 @@ function key() {
     if (code == 32) {
         // Space: clear code
         updateSelection("");
-    } else if (code == 37) {
-        // Left arrow: remove one letter
-        // FIXME: grab backspace too (suppress navigation)
+    } else if (code == 37 || code == 8) {
+        // Backspace / left arrow: remove one number
         if (selectedZip.length > 0) {
             updateSelection(selectedZip.substr(0, selectedZip.length - 1));
         }
+        // Prevent the browser from going back in the URL history
+        d3.event.preventDefault();
     } else if (code >= 48 && code <= 57) {
         // number keys: add that to the zip if possible
         if (selectedZip.length < 5) {
             updateSelection(selectedZip + String.fromCharCode(code));
         }
     }
-    return false;
 };
 
 // Interaction: update the selected zip code
@@ -109,7 +109,7 @@ function render(error, states, zips) {
 
     // Interaction: text box displaying the selection
     svg.append("text").attr("id", "selected")
-        .text("type zip")
+        .text(instructions)
         .attr("x", 20).attr("y", 50);
 
     // Display: state outlines
@@ -129,7 +129,7 @@ function render(error, states, zips) {
         .style("fill", unselectedColor)
         .attr("width", 1).attr("height", 1);
 
-    // Interaction: handle keyboard events
+    // Interaction: handle keyboard events (keydown to capture backspace)
     d3.select("body").on("keydown", key);
 };
 </script>
