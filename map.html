@@ -7,6 +7,7 @@
 <title>Zip Decode</title>
 
 <script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="queue.min.js"></script>
 
 <style type="text/css">
 body {
@@ -14,6 +15,7 @@ body {
     font-family: Helvetica, Arial, sans-serif; font-size: 12px;
     overflow: hidden;
 }
+#states { fill: none; stroke: #888; stroke-width: 0.5px; }
 </style>
 
 </head><body>
@@ -22,17 +24,31 @@ body {
 
 <script type="text/javascript">
 var width = 1200,
-    height = 1000;
+    height = 600;
 
 
-var proj = d3.geo.albersUsa()
-//    .center([-90, 40])
-//    .translate([width / 2, height / 2]);
+var proj = d3.geo.albersUsa().scale(1200)
+    .translate([width / 2, height / 2]);
 
-d3.tsv("zips.tsv", function(error, zips) {
+var path = d3.geo.path().projection(proj);
+
+queue()
+    .defer(d3.json, "us-states.geojson")
+    .defer(d3.tsv, "zips.tsv")
+    .await(render);
+
+function render(error, states, zips) {
     var svg = d3.select("#map").append("svg")
         .attr("width", width)
         .attr("height", height);
+
+    svg.append("g").attr("id", "states");
+    console.log(states.features);
+    d3.select("#states").selectAll("path")
+        .data(states.features)
+      .enter().append("path")
+        .attr("d", path);
+
     svg.append("g").attr("id", "zipdots");
     d3.select("#zipdots").selectAll("rect")
         .data(zips)
@@ -42,7 +58,7 @@ d3.tsv("zips.tsv", function(error, zips) {
         .attr("width", 1).attr("height", 1);
 
     // console.log(zips);
-});
+};
 /*
 
 function wbdColor(wbd) {
