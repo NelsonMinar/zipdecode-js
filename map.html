@@ -49,7 +49,7 @@ var proj = d3.geo.albersUsa().scale(1200)
     .translate([width / 2, height / 2]);
 var path = d3.geo.path().projection(proj);
 
-// Inteaction: stored state
+// Interaction: stored state
 var selectedZip = "";
 
 // Display: AJAX load the data files, then call render()
@@ -87,7 +87,7 @@ function updateSelection(n) {
 
     // Set the text label
     var t = l > 0 ? selectedZip : instructions;
-    d3.select("#selected").text(selectedZip);
+    d3.select("#selected").text(t);
 
     // Recolor all the zip dots
     d3.select("#zipdots").selectAll("rect")
