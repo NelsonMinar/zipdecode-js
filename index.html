@@ -28,7 +28,11 @@ text { fill: #cbcbcb; font-size: 24px; }
 <!-- Static HTML defining the page -->
 <center>
 <div id="map"></div>
-<p style="padding-top: 50px">A reimplementation of
+<p style="padding-top: 50px; font-size: 120%">
+    Please type a zip code
+</p>
+
+<p>A reimplementation of
     <a href="http://benfry.com/">Ben Fry</a>'s
     <a href="http://benfry.com/zipdecode/">zipdecode (2004)</a><br>
     In Javascript with <a href="http://d3js.org/">D3</a>
@@ -36,13 +40,18 @@ text { fill: #cbcbcb; font-size: 24px; }
 </p>
 </center>
 
+<a href="https://github.com/NelsonMinar/zipdecode-js"><img
+      style="position:absolute;top:0;right:0;border:0;"
+      width="149" height="149" src="forkme.png" alt="Fork me on GitHub"
+      /></a>
+
 <script type="text/javascript">
 
 // Display: configurable parameters (see also HTML)
 var width = 1200, height = 600;
 var unselectedColor = "#999a63";
 var selectedColor = "#cbcbcb";
-var instructions = "type zipcode";
+var instructions = "";
 
 // Display: geographic projection
 var proj = d3.geo.albersUsa().scale(1200)
