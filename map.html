@@ -15,12 +15,12 @@ body {
     color: #cbcbcb;
 }
 a { text-decoration: none; color: #999a63 }
+#map { width: 1200px; height: 600px; }
 
 /* SVG styling */
 svg { background-color: #333333 }
 text { fill: #cbcbcb; font-size: 24px; }
-#map { width: 1200px; height: 600px; }
-#states { fill: none; stroke: #aaa; stroke-width: 0.5px; }
+#states { fill: none; stroke: #555555; stroke-width: 0.5px; }
 </style>
 
 </head><body>
@@ -112,14 +112,12 @@ function render(error, states, zips) {
         .text("type zip")
         .attr("x", 20).attr("y", 50);
 
-/*
     // Display: state outlines
     svg.append("g").attr("id", "states");
     d3.select("#states").selectAll("path")
         .data(states.features)
       .enter().append("path")
         .attr("d", path);
-*/
 
     // Display: all the dots for zip code centroids
     svg.append("g").attr("id", "zipdots");
