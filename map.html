@@ -1,8 +1,6 @@
-
 <!DOCTYPE html>
 <html lang="en"><head>
 <meta charset="utf-8">
-<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0"/>
 
 <title>Zip Decode</title>
 
@@ -10,13 +8,15 @@
 <script src="queue.min.js"></script>
 
 <style type="text/css">
-html { background-color: #333333}
+/* HTML styling */
+html { background-color: #333333 }
 body {
     font-family: Helvetica, Arial, sans-serif; font-size: 16px;
-    overflow: hidden;
     color: #cbcbcb;
 }
 a { text-decoration: none; color: #999a63 }
+
+/* SVG styling */
 svg { background-color: #333333 }
 text { fill: #cbcbcb; font-size: 24px; }
 #map { width: 1200px; height: 600px; }
@@ -24,6 +24,8 @@ text { fill: #cbcbcb; font-size: 24px; }
 </style>
 
 </head><body>
+
+<!-- Static HTML defining the page -->
 <center>
 <div id="map"></div>
 <p style="padding-top: 50px">A reimplementation of
@@ -33,25 +35,30 @@ text { fill: #cbcbcb; font-size: 24px; }
     by <a href="http://www.somebits.com/weblog/">Nelson Minar</a>
 </p>
 </center>
+
 <script type="text/javascript">
-var width = 1200,
-    height = 600;
+
+// Display: configurable parameters (see also HTML)
+var width = 1200, height = 600;
 var unselectedColor = "#999a63";
 var selectedColor = "#cbcbcb";
 var instructions = "type zip";
 
+// Display: geographic projection
 var proj = d3.geo.albersUsa().scale(1200)
     .translate([width / 2, height / 2]);
-
 var path = d3.geo.path().projection(proj);
 
+// Inteaction: stored state
+var selectedZip = "";
+
+// Display: AJAX load the data files, then call render()
 queue()
     .defer(d3.json, "us-states.geojson")
     .defer(d3.tsv, "zips.tsv")
     .await(render);
 
-
-var selectedZip = "";
+// Interaction: handle keyboard input
 function key() {
     var code = d3.event.keyCode;
 
@@ -60,12 +67,12 @@ function key() {
         updateSelection("");
     } else if (code == 37) {
         // Left arrow: remove one letter
-        // FIXME: grab backspace too (suppress navigaton)
+        // FIXME: grab backspace too (suppress navigation)
         if (selectedZip.length > 0) {
             updateSelection(selectedZip.substr(0, selectedZip.length - 1));
         }
     } else if (code >= 48 && code <= 57) {
-        // 0..9: add that to the zip if possible
+        // number keys: add that to the zip if possible
         if (selectedZip.length < 5) {
             updateSelection(selectedZip + String.fromCharCode(code));
         }
@@ -73,16 +80,16 @@ function key() {
     return false;
 };
 
-/* Interaction: update the selected zip code */
+// Interaction: update the selected zip code
 function updateSelection(n) {
     selectedZip = n;
     var l = selectedZip.length;
 
-    /* Set the text label */
+    // Set the text label
     var t = l > 0 ? selectedZip : instructions;
     d3.select("#selected").text(selectedZip);
 
-    /* Color all the zip dots */
+    // Recolor all the zip dots
     d3.select("#zipdots").selectAll("rect")
         .style("fill", function(d, i) {
             if (l > 0 && d.zip.substr(0, l) == selectedZip) {
@@ -93,17 +100,20 @@ function updateSelection(n) {
         });
 }
 
-/* Setup: create the SVG, draw the map */
+// Display: create the SVG, draw the map
 function render(error, states, zips) {
+    // Display: the main SVG container
     var svg = d3.select("#map").append("svg")
         .attr("width", width)
         .attr("height", height);
 
+    // Interaction: text box displaying the selection
     svg.append("text").attr("id", "selected")
         .text("type zip")
         .attr("x", 20).attr("y", 50);
 
 /*
+    // Display: state outlines
     svg.append("g").attr("id", "states");
     d3.select("#states").selectAll("path")
         .data(states.features)
@@ -111,6 +121,7 @@ function render(error, states, zips) {
         .attr("d", path);
 */
 
+    // Display: all the dots for zip code centroids
     svg.append("g").attr("id", "zipdots");
     d3.select("#zipdots").selectAll("rect")
         .data(zips)
@@ -120,6 +131,7 @@ function render(error, states, zips) {
         .style("fill", unselectedColor)
         .attr("width", 1).attr("height", 1);
 
+    // Interaction: handle keyboard events
     d3.select("body").on("keydown", key);
 };
 </script>
