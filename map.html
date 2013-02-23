@@ -69,12 +69,8 @@ function updateSelection(n) {
     selectedZip = n;
     d3.select("#selected").text(selectedZip);
     d3.select("#zipdots").selectAll("rect")
-      .filter(function(d, i) { return d.zip.substr(0, selectedZip.length) == selectedZip; })
-        .style("fill", selectedColor);
-    d3.select("#zipdots").selectAll("rect")
-      .filter(function(d, i) { return d.zip.substr(0, selectedZip.length) != selectedZip; })
-        .style("fill", unselectedColor);
-
+      .style("fill", function(d, i) { return d.zip.substr(0, selectedZip.length) == selectedZip ?
+                                        selectedColor : unselectedColor });
 }
 
 function render(error, states, zips) {
