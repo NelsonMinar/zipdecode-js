@@ -10,25 +10,35 @@
 <script src="queue.min.js"></script>
 
 <style type="text/css">
+html { background-color: #333333}
 body {
-    margin: 0;
-    font-family: Helvetica, Arial, sans-serif; font-size: 12px;
+    font-family: Helvetica, Arial, sans-serif; font-size: 16px;
     overflow: hidden;
+    color: #cbcbcb;
 }
+a { text-decoration: none; color: #999a63 }
+svg { background-color: #333333 }
+text { fill: #cbcbcb; font-size: 24px; }
+#map { width: 1200px; height: 600px; }
 #states { fill: none; stroke: #aaa; stroke-width: 0.5px; }
-#selBox { font-size: 36px; }
 </style>
 
 </head><body>
-
+<center>
 <div id="map"></div>
-<div id="selBox">Selected: <span id="selected"></span></div>
-
+<p style="padding-top: 50px">A reimplementation of
+    <a href="http://benfry.com/">Ben Fry</a>'s
+    <a href="http://benfry.com/zipdecode/">zipdecode (2004)</a><br>
+    In Javascript with <a href="http://d3js.org/">D3</a>
+    by <a href="http://www.somebits.com/weblog/">Nelson Minar</a>
+</p>
+</center>
 <script type="text/javascript">
 var width = 1200,
     height = 600;
-var selectedColor = "#22a";
-var unselectedColor = "#888";
+var unselectedColor = "#999a63";
+var selectedColor = "#cbcbcb";
+var instructions = "type zip";
 
 var proj = d3.geo.albersUsa().scale(1200)
     .translate([width / 2, height / 2]);
@@ -44,8 +54,6 @@ queue()
 var selectedZip = "";
 function key() {
     var code = d3.event.keyCode;
-
-    console.log(code);
 
     if (code == 32) {
         // Space: clear code
@@ -65,25 +73,43 @@ function key() {
     return false;
 };
 
+/* Interaction: update the selected zip code */
 function updateSelection(n) {
     selectedZip = n;
+    var l = selectedZip.length;
+
+    /* Set the text label */
+    var t = l > 0 ? selectedZip : instructions;
     d3.select("#selected").text(selectedZip);
+
+    /* Color all the zip dots */
     d3.select("#zipdots").selectAll("rect")
-      .style("fill", function(d, i) { return d.zip.substr(0, selectedZip.length) == selectedZip ?
-                                        selectedColor : unselectedColor });
+        .style("fill", function(d, i) {
+            if (l > 0 && d.zip.substr(0, l) == selectedZip) {
+                return selectedColor;
+            } else {
+                return unselectedColor;
+            }
+        });
 }
 
+/* Setup: create the SVG, draw the map */
 function render(error, states, zips) {
     var svg = d3.select("#map").append("svg")
         .attr("width", width)
         .attr("height", height);
 
-    svg.append("g").attr("id", "states");
+    svg.append("text").attr("id", "selected")
+        .text("type zip")
+        .attr("x", 20).attr("y", 50);
 
+/*
+    svg.append("g").attr("id", "states");
     d3.select("#states").selectAll("path")
         .data(states.features)
       .enter().append("path")
         .attr("d", path);
+*/
 
     svg.append("g").attr("id", "zipdots");
     d3.select("#zipdots").selectAll("rect")
@@ -91,7 +117,7 @@ function render(error, states, zips) {
       .enter().append("rect")
         .attr("x", function(d) { var p = proj([d.lon, d.lat]); return p[0]; })
         .attr("y", function(d) { var p = proj([d.lon, d.lat]); return p[1]; })
-        .style("fill", selectedColor)
+        .style("fill", unselectedColor)
         .attr("width", 1).attr("height", 1);
 
     d3.select("body").on("keydown", key);
