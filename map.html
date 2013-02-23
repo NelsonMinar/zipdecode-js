@@ -89,7 +89,7 @@ function updateSelection(n) {
     var t = l > 0 ? selectedZip : instructions;
     d3.select("#selected").text(t);
 
-    // Recolor all the zip dots
+    // Recolor all the zip dots. Sadly this is slow, a transition won't work
     d3.select("#zipdots").selectAll("rect")
         .style("fill", function(d, i) {
             if (l > 0 && d.zip.substr(0, l) == selectedZip) {
