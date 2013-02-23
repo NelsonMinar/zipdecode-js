@@ -27,7 +27,8 @@ body {
 <script type="text/javascript">
 var width = 1200,
     height = 600;
-
+var selectedColor = "#22a";
+var unselectedColor = "#888";
 
 var proj = d3.geo.albersUsa().scale(1200)
     .translate([width / 2, height / 2]);
@@ -67,6 +68,13 @@ function key() {
 function updateSelection(n) {
     selectedZip = n;
     d3.select("#selected").text(selectedZip);
+    d3.select("#zipdots").selectAll("rect")
+      .filter(function(d, i) { return d.zip.substr(0, selectedZip.length) == selectedZip; })
+        .style("fill", selectedColor);
+    d3.select("#zipdots").selectAll("rect")
+      .filter(function(d, i) { return d.zip.substr(0, selectedZip.length) != selectedZip; })
+        .style("fill", unselectedColor);
+
 }
 
 function render(error, states, zips) {
@@ -86,7 +94,8 @@ function render(error, states, zips) {
         .data(zips)
       .enter().append("rect")
         .attr("x", function(d) { var p = proj([d.lon, d.lat]); return p[0]; })
-        .attr("y", function(d) { var p = proj([d.lon, d.lat]); return p[1];  })
+        .attr("y", function(d) { var p = proj([d.lon, d.lat]); return p[1]; })
+        .style("fill", selectedColor)
         .attr("width", 1).attr("height", 1);
 
     d3.select("body").on("keydown", key);
