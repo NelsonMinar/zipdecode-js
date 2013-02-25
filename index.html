@@ -82,12 +82,20 @@ function key() {
         // Prevent the browser from going back in the URL history
         d3.event.preventDefault();
     } else if (code >= 48 && code <= 57) {
-        // number keys: add that to the zip if possible
-        if (selectedZip.length < 5) {
-            updateSelection(selectedZip + String.fromCharCode(code));
-        }
+        // number keys
+        appendToSelection(String.fromCharCode(code))
+    } else if (code >= 96 && code <= 105) {
+        // numeric keypad
+        appendToSelection(String.fromCharCode(code-48));
     }
 };
+
+// Interaction: add a single digit to the zip if possible
+function appendToSelection(digit) {
+    if (selectedZip.length < 5) {
+        updateSelection(selectedZip + "" + digit);
+    }
+}
 
 // Interaction: update the selected zip code
 function updateSelection(n) {
