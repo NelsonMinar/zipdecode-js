@@ -97,6 +97,12 @@ function appendToSelection(digit) {
     }
 }
 
+// Data: is the given zip code in the selection?
+function zipSelected(zip) {
+    var l = selectedZip.length;
+    return l > 0 && zip.substr(0, l) == selectedZip;
+}
+
 // Interaction: update the selected zip code
 function updateSelection(n) {
     selectedZip = n;
@@ -110,13 +116,7 @@ function updateSelection(n) {
 
     // Recolor all the zip dots. Sadly this is slow, a transition won't work
     d3.select("#zipdots").selectAll("rect")
-        .style("fill", function(d, i) {
-            if (l > 0 && d.zip.substr(0, l) == selectedZip) {
-                return selectedColor;
-            } else {
-                return unselectedColor;
-            }
-        });
+        .style("fill", function(d, i) { return zipSelected(d.zip) ? selectedColor : unselectedColor; });
 
     console.log("Update dots: " + (Date.now() - start) + "ms");
 }
