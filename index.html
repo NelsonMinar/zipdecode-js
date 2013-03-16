@@ -4,7 +4,7 @@
 
 <title>Zip Decode</title>
 
-<script src="http://d3js.org/d3.v3.js"></script>
+<script src="http://d3js.org/d3.v3.min.js"></script>
 <script src="queue.min.js"></script>
 
 <style type="text/css">
@@ -21,6 +21,13 @@ a { text-decoration: none; color: #999a63 }
 svg { background-color: #333333 }
 text { fill: #cbcbcb; font-size: 24px; }
 #states { fill: none; stroke: #555555; stroke-width: 0.5px; }
+rect {
+    transition: fill 0.4s;
+    -webkit-transition: fill 0.4s;
+    -o-transition: fill 0.4s;
+}
+.selected { fill: #cbcbcb }
+.unselected { fill: #999a63 }
 </style>
 
 </head><body>
@@ -49,8 +56,6 @@ text { fill: #cbcbcb; font-size: 24px; }
 
 // Display: configurable parameters (see also HTML)
 var width = 1200, height = 600;
-var unselectedColor = "#999a63";
-var selectedColor = "#cbcbcb";
 var instructions = "";
 
 // Display: geographic projection
@@ -116,7 +121,7 @@ function updateSelection(n) {
 
     // Recolor all the zip dots. Sadly this is slow, a transition won't work
     d3.select("#zipdots").selectAll("rect")
-        .style("fill", function(d, i) { return zipSelected(d.zip) ? selectedColor : unselectedColor; });
+        .attr("class", function(d) { return zipSelected(d.zip) ? "selected" : "unselected" });
 
     console.log("Update dots: " + (Date.now() - start) + "ms");
 }
@@ -149,7 +154,7 @@ function render(error, states, zips) {
       .enter().append("rect")
         .attr("x", function(d) { var p = proj([d.lon, d.lat]); return p[0]; })
         .attr("y", function(d) { var p = proj([d.lon, d.lat]); return p[1]; })
-        .style("fill", unselectedColor)
+        .attr("class", "unselected")
         .attr("width", 1).attr("height", 1);
 
     console.log("Draw dots: " + (Date.now() - start) + "ms");
