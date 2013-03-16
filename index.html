@@ -4,7 +4,7 @@
 
 <title>Zip Decode</title>
 
-<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="http://d3js.org/d3.v3.js"></script>
 <script src="queue.min.js"></script>
 
 <style type="text/css">
@@ -106,6 +106,8 @@ function updateSelection(n) {
     var t = l > 0 ? selectedZip : instructions;
     d3.select("#selected").text(t);
 
+    var start = Date.now();
+
     // Recolor all the zip dots. Sadly this is slow, a transition won't work
     d3.select("#zipdots").selectAll("rect")
         .style("fill", function(d, i) {
@@ -115,6 +117,8 @@ function updateSelection(n) {
                 return unselectedColor;
             }
         });
+
+    console.log("Update dots: " + (Date.now() - start) + "ms");
 }
 
 // Display: create the SVG, draw the map
@@ -136,6 +140,8 @@ function render(error, states, zips) {
       .enter().append("path")
         .attr("d", path);
 
+    var start = Date.now();
+
     // Display: all the dots for zip code centroids
     svg.append("g").attr("id", "zipdots");
     d3.select("#zipdots").selectAll("rect")
@@ -145,6 +151,8 @@ function render(error, states, zips) {
         .attr("y", function(d) { var p = proj([d.lon, d.lat]); return p[1]; })
         .style("fill", unselectedColor)
         .attr("width", 1).attr("height", 1);
+
+    console.log("Draw dots: " + (Date.now() - start) + "ms");
 
     // Interaction: handle keyboard events (keydown to capture backspace)
     d3.select("body").on("keydown", key);
