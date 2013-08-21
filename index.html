@@ -152,8 +152,8 @@ function render(error, states, zips) {
     d3.select("#zipdots").selectAll("rect")
         .data(zips)
       .enter().append("rect")
-        .attr("x", function(d) { var p = proj([d.lon, d.lat]); return p[0]; })
-        .attr("y", function(d) { var p = proj([d.lon, d.lat]); return p[1]; })
+        .attr("x", function(d) { var p = proj([d.lon, d.lat]); return p ? p[0] : null; })
+        .attr("y", function(d) { var p = proj([d.lon, d.lat]); return p ? p[1] : null; })
         .attr("class", "unselected")
         .attr("width", 1).attr("height", 1);
 
